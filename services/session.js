@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const redisClient = require('../services/redis');
 
 const signToken = (email) => {
   const jwtPayload = { email };
@@ -11,15 +10,15 @@ const signToken = (email) => {
   );
 };
 
-const setToken = (key, value) => {
-  return Promise.resolve(redisClient.set(key, value));
+const setToken = (token, userId, redis) => {
+  return Promise.resolve(redis.set(token, userId));
 };
 
-const createSession = (user) => {
+const createSession = (user, redis) => {
   const { email, id } = user;
   const token = signToken(email);
 
-  return setToken(token, id)
+  return setToken(token, id, redis)
     .then(() => ({ success: true, userId: id, token }));
 };
 

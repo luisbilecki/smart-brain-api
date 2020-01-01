@@ -19,6 +19,7 @@ const db = knex({
   client: 'pg',
   connection: process.env.POSTGRES_URI,
 });
+const redis = require('./services/redis');
 
 const app = express();
 
@@ -26,10 +27,10 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 
-app.post('/signin', signin.handleAuthentication(db, bcrypt));
-app.delete('/signout', signout.handleSignout);
+app.post('/signin', signin.handleAuthentication(db, bcrypt, redis));
+app.delete('/signout', signout.handleSignout(redis));
 app.post('/register', (req, res) => {
-  register.handleRegister(req, res, db, bcrypt); 
+  register.handleRegister(req, res, db, bcrypt, redis); 
 });
 app.get('/profile/:id', auth.requireAuth, (req, res) => {
   profile.handleProfileGet(req, res, db); 

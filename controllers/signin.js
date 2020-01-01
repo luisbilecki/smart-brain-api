@@ -1,4 +1,3 @@
-const redisClient = require('../services/redis');
 const { createSession } = require('../services/session');
 const { extractToken } = require('../helpers/token');
 
@@ -25,10 +24,10 @@ const handleSignin = (db, bcrypt, req) => {
     .catch(() => Promise.reject('wrong credentials'));
 };
 
-const getAuthTokenId = (req, res) => {
+const getAuthTokenId = (req, res, redis) => {
   const token = extractToken(req.headers);
 
-  redisClient.get(token, (err, reply) => {
+  redis.get(token, (err, reply) => {
     if (err || !reply) {
       return res.status(401).json('Unauthorized');
     }
@@ -37,14 +36,14 @@ const getAuthTokenId = (req, res) => {
   });
 };
 
-const handleAuthentication = (db, bcrypt) => (req, res) => {
+const handleAuthentication = (db, bcrypt, redis) => (req, res) => {
   const { authorization } = req.headers;
 
   return authorization ? 
-    getAuthTokenId(req, res) : 
+    getAuthTokenId(req, res, redis) : 
     handleSignin(db, bcrypt, req)
       .then(data => data.id && data.email ? 
-        createSession(data) : 
+        createSession(data, redis) : 
         Promise.reject(data)
       )
       .then(session => res.json(session))

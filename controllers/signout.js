@@ -1,10 +1,9 @@
 const { extractToken } = require('../helpers/token');
-const redisClient = require('../services/redis');
 
-const handleSignout = (req, res) => {
+const handleSignout = (redis) => (req, res) => {
   const token = extractToken(req.headers);
 
-  redisClient.del(token, () => {
+  redis.del(token, () => {
     return res.json({ success: true });
   });
 };
