@@ -1,4 +1,5 @@
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
+const { createSession } = require('../services/session');
 
 const handleRegister = (req, res, db, bcrypt) => {
   const { email, name, password } = req.body;
@@ -21,9 +22,8 @@ const handleRegister = (req, res, db, bcrypt) => {
             name: name,
             joined: new Date()
           })
-          .then(user => {
-            res.json(user[0]);
-          })
+          .then(user => createSession(user[0]))
+          .then(session => res.json(session));
       })
       .then(trx.commit)
       .catch(trx.rollback)
