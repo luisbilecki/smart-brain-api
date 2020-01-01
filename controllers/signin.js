@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const redis = require('redis');
 
-const redisClient = redis.createClient(process.env.REDIS_URL);
+const redisClient = require('../services/redis');
+const { extractToken } = require('../helpers/token');
 
 const handleSignin = (db, bcrypt, req) => {
   const { email, password } = req.body;
@@ -27,12 +27,7 @@ const handleSignin = (db, bcrypt, req) => {
 }
 
 const getAuthTokenId = (req, res) => {
-  let token = req.headers['authorization'];
-
-  if (token.startsWith('Bearer ')) {
-    token = token.slice(7, token.length).trimLeft();
-  }
-
+  const token = extractToken(req.headers);
 
   redisClient.get(token, (err, reply) => {
     if (err || !reply) {
