@@ -9,6 +9,7 @@ const morgan = require('morgan');
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
+const signout = require('./controllers/signout');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
@@ -26,6 +27,7 @@ app.use(morgan('combined'));
 app.use(bodyParser.json());
 
 app.post('/signin', signin.handleAuthentication(db, bcrypt));
+app.delete('/signout', signout.handleSignout);
 app.post('/register', (req, res) => {
   register.handleRegister(req, res, db, bcrypt); 
 });
