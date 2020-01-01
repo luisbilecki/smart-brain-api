@@ -40,15 +40,16 @@ const signToken = (email) => {
   );
 };
 
+const setToken = (key, value) => {
+  return Promise.resolve(redisClient.set(key, value));
+};
+
 const createSessions = (user) => {
   const { email, id } = user;
   const token = signToken(email);
 
-  return {
-    success: true,
-    userId: id,
-    token,
-  };
+  return setToken(token, id)
+  .then(() => ({ success: true, userId: id, token }));
 };
 
 const handleAuthentication = (db, bcrypt) => (req, res) => {
