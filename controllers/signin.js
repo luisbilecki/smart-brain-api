@@ -27,9 +27,14 @@ const handleSignin = (db, bcrypt, req) => {
 }
 
 const getAuthTokenId = (req, res) => {
-  // Considering authorization is Authorization: JWT_TOKEN and not : Bearer TOKEN
-  const { authorization } = req.headers;
-  redisClient.get(authorization, (err, reply) => {
+  let token = req.headers['authorization'];
+
+  if (token.startsWith('Bearer ')) {
+    token = token.slice(7, token.length).trimLeft();
+  }
+
+
+  redisClient.get(token, (err, reply) => {
     if (err || !reply) {
       return res.status(401).json('Unauthorized');
     }
