@@ -1,7 +1,7 @@
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
 const { createSession } = require('../services/session');
 
-const handleRegister = (req, res, db, bcrypt) => {
+const handleRegister = (req, res, db, bcrypt, redis) => {
   const { email, name, password } = req.body;
   if (!email || !name || !password) {
     return res.status(400).json('incorrect form submission');
@@ -22,7 +22,7 @@ const handleRegister = (req, res, db, bcrypt) => {
             name: name,
             joined: new Date()
           })
-          .then(user => createSession(user[0]))
+          .then(user => createSession(user[0], redis))
           .then(session => res.json(session));
       })
       .then(trx.commit)
