@@ -17,13 +17,13 @@ const handleSignin = (db, bcrypt, req) => {
         return db.select('*').from('users')
           .where('email', '=', email)
           .then(user => user[0])
-          .catch(() => Promise.reject('unable to get user'))
+          .catch(() => Promise.reject('unable to get user'));
       } else {
-        return Promise.reject('wrong credentials')
+        return Promise.reject('wrong credentials');
       }
     })
-    .catch(() => Promise.reject('wrong credentials'))
-}
+    .catch(() => Promise.reject('wrong credentials'));
+};
 
 const getAuthTokenId = (req, res) => {
   const token = extractToken(req.headers);
@@ -44,8 +44,8 @@ const handleAuthentication = (db, bcrypt) => (req, res) => {
     getAuthTokenId(req, res) : 
     handleSignin(db, bcrypt, req)
       .then(data => data.id && data.email ? 
-          createSession(data) : 
-          Promise.reject(data)
+        createSession(data) : 
+        Promise.reject(data)
       )
       .then(session => res.json(session))
       .catch(err => res.status(400).json(err));
@@ -54,4 +54,4 @@ const handleAuthentication = (db, bcrypt) => (req, res) => {
 module.exports = {
   handleSignin,
   handleAuthentication
-}
+};

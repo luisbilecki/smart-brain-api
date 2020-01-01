@@ -25,12 +25,22 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 
-app.post('/signin', signin.handleAuthentication(db, bcrypt))
-app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
-app.get('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db) })
-app.post('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) })
-app.put('/image', auth.requireAuth, (req, res) => { image.handleImage(req, res, db)})
-app.post('/imageurl', auth.requireAuth, (req, res) => { image.handleApiCall(req, res)})
+app.post('/signin', signin.handleAuthentication(db, bcrypt));
+app.post('/register', (req, res) => {
+  register.handleRegister(req, res, db, bcrypt); 
+});
+app.get('/profile/:id', auth.requireAuth, (req, res) => {
+  profile.handleProfileGet(req, res, db); 
+});
+app.post('/profile/:id', auth.requireAuth, (req, res) => {
+  profile.handleProfileUpdate(req, res, db); 
+});
+app.put('/image', auth.requireAuth, (req, res) => {
+  image.handleImage(req, res, db);
+});
+app.post('/imageurl', auth.requireAuth, (req, res) => {
+  image.handleApiCall(req, res);
+});
 
 app.listen(3000, ()=> {
   console.log('app is running on port 3000');

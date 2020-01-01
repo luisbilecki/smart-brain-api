@@ -20,7 +20,7 @@ const createSession = (user) => {
   const token = signToken(email);
 
   return setToken(token, id)
-  .then(() => ({ success: true, userId: id, token }));
+    .then(() => ({ success: true, userId: id, token }));
 };
 
 module.exports = {
